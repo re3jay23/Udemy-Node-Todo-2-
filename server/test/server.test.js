@@ -146,23 +146,23 @@ describe('DELETE /Todos2/:id',()=>{
   });
 });
 
-describe('PATCH /Todos2/:id',()=>{
-  it('should update todo',(done)=>{
-      //grab id of first item
-      //update text, set completed to true
-      //200
-      //text is change, completed is true, completedAt is number
-      var firstID = todos[0]._id.toHexString();
-      request(app)
-        .patch(`/Todos2/${firstID}`)
-        .expect(200)
-  });
-  it('should clear completedAt when todo is not completed',(done)=>{
-    // grab id of second item
-    // update text, set completed to false
-    //200
-    //text is change, completed is false, completedAt is null .toNotExist
-  });
-
-
-})
+// describe('PATCH /Todos2/:id',()=>{
+//   it('should update todo',(done)=>{
+//       //grab id of first item
+//       //update text, set completed to true
+//       //200
+//       //text is change, completed is true, completedAt is number
+//       var firstID = todos[0]._id.toHexString();
+//       request(app)
+//         .patch(`/Todos2/${firstID}`)
+//         .expect(200)
+//   });
+//   it('should clear completedAt when todo is not completed',(done)=>{
+//     // grab id of second item
+//     // update text, set completed to false
+//     //200
+//     //text is change, completed is false, completedAt is null .toNotExist
+//   });
+//
+//
+// })
