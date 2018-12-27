@@ -8,6 +8,8 @@ var { mongoose } = require('./db/mongoose');
 var { Todos2 } = require('./models/Todos2');
 var { Users } = require('./models/Users');
 const {ObjectID}= require('mongodb');
+var {authenticate} = require('./middleware/authenticate');
+
 var app = express();
 
 var port = process.env.PORT;
@@ -109,6 +111,11 @@ app.get('/users',(req,res)=>{
   })
 })
 
+//added GET/ users/me to authenticate the user by token
+//using authenticate middleware to process the authentication.
+app.get('/users/me',authenticate,(req,res)=>{
+  res.send(req.user)
+})
 
 app.listen(port,()=>{
   console.log(`Started on port ${port}`);

@@ -57,6 +57,27 @@ UserSchema.methods.toJSON = function(){
 
 }
 
+// create a new static function to authenticate token
+
+UserSchema.statics.findByToken = function(token){
+  var User = this;
+  var decoded;
+  try{
+    decoded = jwt.verify(token,'abc123');
+  }catch(e){
+    // return new Promise((resolve,reject)=>{
+    //   reject();
+    // })
+    return Promise.reject();
+  }
+  //console.log('decoded: ',decoded);
+  return User.findOne({
+    '_id':decoded._id,
+    'tokens.access':decoded.access,
+    'tokens.token':token
+  })
+}
+
 
 var Users = mongoose.model('Users',UserSchema);
 module.exports = {Users};
