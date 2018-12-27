@@ -88,6 +88,27 @@ app.patch('/Todos2/:id',(req,res)=>{
   })
 })
 
+//added POST/ users method 12-26-2018
+app.post('/users',(req,res)=>{
+  var user = new Users( _.pick(req.body,['email','password']));
+  user.save().then(()=>{
+    return user.generateAuthToken();
+  }).then((token)=>{
+    res.header('x-auth',token).send(user);
+  }).catch((e)=>{
+    res.status(404).send(e);
+  })
+})
+
+// added GET/ users method 12-26-2018
+app.get('/users',(req,res)=>{
+  Users.find().then((users)=>{
+    res.send({users});
+  }).catch((e)=>{
+    res.status(404).send(e);
+  })
+})
+
 
 app.listen(port,()=>{
   console.log(`Started on port ${port}`);
