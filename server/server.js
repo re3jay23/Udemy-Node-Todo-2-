@@ -62,7 +62,7 @@ app.delete('/Todos2/:id',(req,res)=>{
   }).catch((e)=>{
     res.status(404).send();
   })
-})
+});
 
 app.patch('/Todos2/:id',(req,res)=>{
   var id = req.params.id;
@@ -88,7 +88,7 @@ app.patch('/Todos2/:id',(req,res)=>{
   }).catch((e)=>{
     res.status(404).send();
   })
-})
+});
 
 //added POST/ users method 12-26-2018
 app.post('/users',(req,res)=>{
@@ -114,7 +114,7 @@ app.get('/users',(req,res)=>{
 //added GET/ users/me to authenticate the user by token
 //using authenticate middleware to process the authentication.
 app.get('/users/me',authenticate,(req,res)=>{
-  res.send(req.user)
+  res.send(req.user);
 })
 
 app.listen(port,()=>{
