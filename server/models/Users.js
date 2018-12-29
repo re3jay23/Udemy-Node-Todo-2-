@@ -96,5 +96,28 @@ UserSchema.pre('save',function(next){
   }
 })
 
+//Creating mongoose middleware for /users/login route to find credential
+
+UserSchema.statics.findByCredentials= function(email,password){
+  var User = this;
+  console.log(`email is ${email} and password is ${password}`);
+  return User.findOne({email}).then((user)=>{
+    if(!user){
+      return Promise.reject();
+    }
+    return new Promise((resolve,reject)=>{
+      bcrypt.compare(password, user.password,function(err,res){
+        console.log('res:',res);
+        if(res){
+          resolve(user);
+        }else{
+          reject();
+        }
+      });
+    });
+  })
+}
+
+
 var Users = mongoose.model('Users',UserSchema);
 module.exports = {Users};
