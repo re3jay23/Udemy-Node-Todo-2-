@@ -57,7 +57,7 @@ UserSchema.methods.removeToken = function(token){
     $pull:{
       tokens:{token}
     }
-  })
+  });
 };
 
 // overriding .toJSON method to only show _id and email only
