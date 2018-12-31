@@ -50,6 +50,16 @@ UserSchema.methods.generateAuthToken = function(){
     })
 };
 
+// removeToken method is used to remove token from an existing user.
+UserSchema.methods.removeToken = function(token){
+  var user = this;
+  return user.update({
+    $pull:{
+      tokens:{token}
+    }
+  })
+};
+
 // overriding .toJSON method to only show _id and email only
 UserSchema.methods.toJSON = function(){
   var user = this;
