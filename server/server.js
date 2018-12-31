@@ -92,13 +92,14 @@ app.patch('/Todos2/:id',(req,res)=>{
 
 //added POST/ users method 12-26-2018
 app.post('/users',(req,res)=>{
-  var user = new Users( _.pick(req.body,['email','password']));
+  var body = _.pick(req.body,['email','password']);
+  var user = new Users(body);
   user.save().then(()=>{
     return user.generateAuthToken();
   }).then((token)=>{
     res.header('x-auth',token).send(user);
   }).catch((e)=>{
-    res.status(404).send(e);
+    res.status(400).send(e);
   })
 })
 
@@ -107,7 +108,7 @@ app.get('/users',(req,res)=>{
   Users.find().then((users)=>{
     res.send({users});
   }).catch((e)=>{
-    res.status(404).send(e);
+    res.status(400).send(e);
   })
 })
 
@@ -122,9 +123,11 @@ app.post('/users/login',(req,res)=>{
   var body = _.pick(req.body,['email','password']);
   //res.send(body);
   Users.findByCredentials(body.email,body.password).then((user)=>{
-    res.send(user);
+    return user.generateAuthToken().then((token) => {
+        res.header('x-auth', token).send(user);
+      })
   }).catch((e)=>{
-    res.status(404).send(e);
+    res.status(400).send(e);
   })
 })
 
@@ -136,34 +139,3 @@ app.listen(port,()=>{
 module.exports = {app};
 // mongoose.Promise = global.Promise;
 // mongoose.connect('mongodb://localhost:27017/TodoApp2');
-
-
-// var newTodo = new Todo2({
-//   text:'doing this shit',
-//   completed:true,
-//   completedAt:1
-// });
-//
-// newTodo.save().then((doc)=>{
-//   console.log('saved todo',doc)
-// },(e)=>{
-//   console.log('Unable to save todo')
-// });
-// var otherTodo = new Todo2({
-//   text:'  Edit this shit  ',
-// });
-// otherTodo.save().then((doc)=>{
-//   console.log('saved todo', doc);
-// },(e)=>{
-//   console.log('Unable to save todo',e);
-// })
-
-//
-// var newUser = new Users({
-//   email:"ari@whatever.com"
-// })
-// newUser.save().then((doc)=>{
-//   console.log('save User', doc);
-// },(e)=>{
-//   console.log('Unable to save user', e)
-// })

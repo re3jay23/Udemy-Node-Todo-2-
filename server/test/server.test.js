@@ -192,7 +192,7 @@ describe('GET /users/me',()=>{
       })
       .end(done)
   })
-  it('should not return user if not authenticated',(done)=>{
+  it('should return 401 user if not authenticated',(done)=>{
     request(app)
       .get('/users/me')
       .expect(401)
@@ -220,15 +220,15 @@ describe('POST /users',()=>{
         expect(res.body._id).toExist();
         expect(res.body.email).toExist();
       })
-      .end((err,res)=>{
+      .end((err)=>{
         if(err){
           return done(err)
         }
         Users.findOne({email}).then((user)=>{
-          expect(user.password).toNotEqual(password);
+          expect(user.password).toNotBe(password);
           expect(user).toExist();
           done();
-        })
+        }).catch((e)=>done(e))
       })
   })
 
@@ -238,7 +238,7 @@ describe('POST /users',()=>{
     request(app)
       .post('/users')
       .send({email, password})
-      .expect(404)
+      .expect(400)
       .end(done)
   })
 
@@ -248,10 +248,56 @@ describe('POST /users',()=>{
     request(app)
       .post('/users')
       .send({email,password})
-      .expect(404)
+      .expect(400)
       .end(done)
   })
 
+});
+describe('POST /users/login',()=>{
+  it('should login user and return auth token',(done)=>{
+    request(app)
+      .post('/users/login')
+      .send({
+        email:users[1].email,
+        password:users[1].password
+      })
+      .expect(200)
+      .expect((res)=>{
+        expect(res.headers['x-auth']).toExist();
+      })
+      .end((err,res)=>{
+        if(err){
+          return done(err);
+        }
+        Users.findById(users[1]._id).then((user)=>{
+          expect(user.tokens[0]).toInclude({
+            access:'auth',
+            token:res.headers['x-auth']
+          });
+          done();
+        }).catch((e)=>done(e))
+      })
+  })
 
-
+  it('should fail loging in user if invalid input',(done)=>{
+    request(app)
+      .post('users/login')
+      .send({
+        email:users[1].email,
+        password:users[1].password+'100'
+      })
+      .expect(400)
+      .expect((res)=>{
+        expect(res.headers['x-auth']).toNotExist();
+      })
+      .end((err,res)=>{
+        if(err){
+          return done(err);
+        }
+        Users.findById(users[1]._id).then((user)=>{
+          expect(user.tokens.length).toBe(0);
+          done()
+        }).catch((e)=>done(e))
+      })
+  })
 })
